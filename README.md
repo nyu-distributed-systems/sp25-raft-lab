@@ -1,6 +1,6 @@
 # Lab 2 and Lab 3: Raft
 
-To get started go to []()
+To get started go to [https://classroom.github.com/a/Dn5GFoXp](https://classroom.github.com/a/Dn5GFoXp)
 to create a repository and get the template code.
 
 ## Introduction
