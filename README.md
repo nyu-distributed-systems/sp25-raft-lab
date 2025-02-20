@@ -1,8 +1,10 @@
 # Lab 2 and Lab 3: Raft
-To get started go to [https://classroom.github.com/a/Xo5z2-s_](https://classroom.github.com/a/Xo5z2-s_)
+
+To get started go to []()
 to create a repository and get the template code.
 
 ## Introduction
+
 In this lab you will implement a replicated state machine using Raft as the
 underlying consensus protocol. The RSM you are implementing models a queue
 supporting enqueue and dequeue operations. The RSM also provides a no-op
@@ -19,6 +21,7 @@ is exactly what your implementation should do. If in doubt, you should figure ou
 how and why you implementation differs from what is described in Figure 2.
 
 You do not need to implement:
+
 * Snapshotting or anything else to reduce log sizes.
 * Reconfiguration or mechanisms to change membership.
 
@@ -48,6 +51,7 @@ Also, you can start with the assumption that all processes are either leaders or
 followers, and hence not worry about candidates in this part of the lab.
 
 ### Testing Lab 2
+
 We have test cases for Lab 2 in [`test/lab3_test.exs`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/test/lab3_test.exs)
 which can be run using:
 
@@ -66,7 +70,6 @@ lectures.
 **WARN WARN WARN** PLEASE READ THESE INSTRUCTIONS CAREFULLY. YOU MAY **RECEIVE
 A 0 (ZERO) IF YOU DO NOT**, EVEN IF YOU COMPLETE EVERYTHING THUS FAR.
 
-
 To handin this assignment:
 
 * First make sure `mix test` shows that you pass all tests. If not be aware
@@ -76,8 +79,8 @@ To handin this assignment:
   implementation notes to Part 3, and filling out the information below.
 * Commit and push all your changes.
 * Use `git rev-parse --short HEAD` to get a commit hash for your changes.
-* Fill out the [submission form](https://forms.gle/5K3DDnTaX8AF2BKz9) with
-  all of the information requested.
+* Fill out the [submission form](https://forms.gle/RsSrxrafuyotz6HU6) with
+  all the information requested.
 
 We will be using information in the submission form to grade your lab, determine
 late days, etc. It is therefore crucial that you fill this out correctly.
@@ -88,23 +91,25 @@ NYU NetID: (e.g., ap191)
 
 NYU N#:
 
-Name: 
+Name:
 
 ### Citations
 
 ## Lab 2 Grading
+
 We will be grading Lab 2 and Lab 3 at the same time. Half (50%) of your Lab 3
 grade will be determined by how the final Lab 4 handing works with the lab 3
 tests, while the rest will be determined the handin for Lab 2. Lab 2 largely
 exists to act as a forcing function for you to being working on this lab.
 
 ## Lab 3: Get Leader Election Working
+
 In this second part you will complete your implementation so that leader election
-works correctly. This requires implementing everything required to handle 
+works correctly. This requires implementing everything required to handle
 `RequestVote` calls correctly, and for getting logs to match.
 
-
 ### Testing Lab 3
+
 We have test cases for Lab 4 in [`test/lab4test.exs`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/test/lab4_test.exs)
 which can be run using:
 
@@ -119,7 +124,6 @@ You are definitely encouraged to add additional tests.
 **WARN WARN WARN** PLEASE READ THESE INSTRUCTIONS CAREFULLY. YOU MAY **RECEIVE
 A 0 (ZERO) IF YOU DO NOT**, EVEN IF YOU COMPLETE EVERYTHING THUS FAR.
 
-
 To handin this assignment:
 
 * First make sure `mix test` shows that you pass all tests. If not be aware
@@ -129,8 +133,8 @@ To handin this assignment:
   implementation notes to Part 3, and filling out the information below.
 * Commit and push all your changes.
 * Use `git rev-parse --short HEAD` to get a commit hash for your changes.
-* Fill out the [submission form](https://forms.gle/8HU7pDVq51tNm62Q9) with
-  all of the information requested.
+* Fill out the [submission form](https://forms.gle/hU8wNdssXBm9bT5W7) with
+  all the information requested.
 
 We will be using information in the submission form to grade your lab, determine
 late days, etc. It is therefore crucial that you fill this out correctly.
@@ -141,14 +145,14 @@ NYU NetID: (e.g., ap191)
 
 NYU N#:
 
-Name: 
+Name:
 
 ### Citations
 
 ## Hints and Code Structure
 
 The stencil code for this project is quite extensive. We recommend reading and
-understanding it, particularly the helper functions before beginning work. 
+understanding it, particularly the helper functions before beginning work.
 Below we provide a few notes that might help you as you look through the code:
 
 * We represent RPC calls and their returns using Elixir structs. These structs
@@ -176,25 +180,25 @@ Below we provide a few notes that might help you as you look through the code:
   
 * You are **required** to implement the [`reset_election_timer`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L331)
  and [`reset_heartbeat_time`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L331).
- Each should cancel any existing timer, and set a new one. You **must** use 
- `state.heartbeat_timeout` as the heartbeat timeout, and call 
+ Each should cancel any existing timer, and set a new one. You **must** use
+ `state.heartbeat_timeout` as the heartbeat timeout, and call
  [`get_election_time`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L316)
  to get the **election** timeout.
- 
+
 * The code is structured so that each processes code appears as a state machine:
   * A process can be in one of three states: [`follower`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L394),
     [`leader`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L525) and
     [`candidate`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L686).
     Each has a function that you should fill out with appropriate information.
-    
+
     Of course some of the logic is shared across the three, and so you should make
     use of additional private functions to avoid code duplication.
-    
-    Each of these functions take both process state (`state`) and an additional 
+
+    Each of these functions take both process state (`state`) and an additional
     `extra_state` parameter that you can use to track anything specific to a particular
     type of process. For example, a candidate can use the `extra_state` parameter to
     track the number of votes it has received.
-    
+
   * We provide three functions [`become_leader`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L509),
     [`become_follower`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L378),
     and [`become_candidate`](https://github.com/nyu-distributed-systems/raft-lab/blob/master/apps/lab3/lib/raft.ex#L670)
@@ -202,13 +206,13 @@ Below we provide a few notes that might help you as you look through the code:
     should used these functions to implement any one-time processing required,
     for instance you might want to add logic in `become_leader` to (a) start a
     heartbeat timer, and (b) assert leadership using an empty AppendEntry message.
-    
+
     You should make sure your transitions call these `become_*` functions. For
     example when implementing the election timeout on a follower your code should
     roughly do the following:
-    
+
     `follower` -(timer)-> `become_candidate` -----> `candidate`
-    
+
     You might want to send out `RequestVote` requests in `become_candidate`.
 
 * Finally, start early, read through the code you are given, and write plan things
